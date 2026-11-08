@@ -1,0 +1,193 @@
+{
+  "id": "w01d1",
+  "level": "A2",
+  "phase": "Foundation",
+  "week": 1,
+  "day": 1,
+  "dayIndex": 1,
+  "topic": "Daily life and routines",
+  "angle": "personal experience and opinions",
+  "grammar": "present simple vs present continuous",
+  "objectives": [
+    "Describe a normal weekday and a current change in your routine",
+    "Use present simple for habits and present continuous for temporary situations",
+    "Speak for 60 seconds with a clear beginning and ending"
+  ],
+  "vocab": [
+    {
+      "term": "commute",
+      "ipa": "/kəˈmjuːt/",
+      "meaning": "the journey to and from work or school",
+      "example": "My commute takes about forty minutes by metro."
+    },
+    {
+      "term": "get ready",
+      "ipa": "/ɡet ˈredi/",
+      "meaning": "to prepare yourself to go out",
+      "example": "I get ready in about twenty minutes."
+    },
+    {
+      "term": "catch up with",
+      "ipa": "/kætʃ ʌp wɪð/",
+      "meaning": "to talk to someone you have not seen for a while",
+      "example": "I catch up with my sister on Sunday evenings."
+    },
+    {
+      "term": "run late",
+      "ipa": "/rʌn leɪt/",
+      "meaning": "to be behind schedule",
+      "example": "The buses are slow here, so I often run late."
+    },
+    {
+      "term": "wind down",
+      "ipa": "/waɪnd daʊn/",
+      "meaning": "to relax after a busy period",
+      "example": "I wind down with a podcast before bed."
+    },
+    {
+      "term": "once in a while",
+      "ipa": "/wʌns ɪn ə waɪl/",
+      "meaning": "sometimes, but not often",
+      "example": "Once in a while I work from a café."
+    }
+  ],
+  "listening": {
+    "title": "A normal Tuesday",
+    "accent": "British",
+    "script": [
+      { "speaker": "Sam", "text": "Priya, you look tired. Are you sleeping badly these days?" },
+      { "speaker": "Priya", "text": "A bit. I'm working on a new project, so I start at seven now. My whole routine is different." },
+      { "speaker": "Sam", "text": "Seven in the morning? I usually start at nine. I need two coffees before I can speak." },
+      { "speaker": "Priya", "text": "I get up at five thirty, get ready fast, and take the early train. It's quiet, actually. I like it." },
+      { "speaker": "Sam", "text": "And what time do you finish?" },
+      { "speaker": "Priya", "text": "Around four. Then I go to the gym, or I catch up with a friend. It's not bad." },
+      { "speaker": "Sam", "text": "My evenings are the opposite. I finish late, so I wind down at eleven and fall asleep at midnight." },
+      { "speaker": "Priya", "text": "That's why you're always tired! Anyway, it's temporary for me. The project ends in March." },
+      { "speaker": "Sam", "text": "Lucky you. Once in a while I'd like an early start too. But not every day." },
+      { "speaker": "Priya", "text": "Ask me again in March. I'm sure I'll be complaining about something else." }
+    ],
+    "gist": {
+      "question": "What is the main point of the conversation?",
+      "options": [
+        "Sam is changing his job next year.",
+        "Priya's routine is different for now because of work.",
+        "They are planning a trip together in March."
+      ],
+      "answer": 1
+    },
+    "detail": [
+      { "question": "What time does Priya get up?", "answer": "5:30" },
+      { "question": "How does she travel to work?", "answer": "by train" },
+      { "question": "When does her project end?", "answer": "March" }
+    ],
+    "shadowing": [
+      "I get up at five thirty, get ready fast, and take the early train.",
+      "My evenings are the opposite, so I wind down at eleven.",
+      "It's temporary for me, the project ends in March."
+    ]
+  },
+  "speaking": {
+    "warmup": [
+      "What is the first thing you do after you wake up?",
+      "What time do you usually start your day?",
+      "Is your life more or less busy than last year?"
+    ],
+    "qa": [
+      {
+        "question": "Describe a normal weekday for you. What do you do, and when?",
+        "hint": "Use present simple for habits: I get up… I start… I usually…",
+        "target": ["I usually", "after that", "my commute takes"]
+      },
+      {
+        "question": "Is your routine different this month? What is changing at the moment?",
+        "hint": "Use present continuous for temporary things: I'm working on… I'm starting…",
+        "target": ["at the moment", "I'm working on", "these days"]
+      },
+      {
+        "question": "What part of your day do you enjoy most, and why?",
+        "hint": "Give a reason and one small example.",
+        "target": ["because", "the best part is", "for example"]
+      }
+    ],
+    "monologue": {
+      "prompt": "Describe your typical day from morning to evening. Say what you do, what you like, and one thing you would like to change.",
+      "seconds": 60,
+      "structure": ["Morning routine", "The busy middle", "Evening and wind-down", "One thing to change"],
+      "useful": [
+        "As soon as I wake up, I…",
+        "The most difficult moment is…",
+        "Once I'm home, I…",
+        "Something I'd like to change is…"
+      ]
+    },
+    "pronunciation": {
+      "focus": "third person -s endings",
+      "pairs": [["works", "work"], ["watches", "watch"], ["lives", "leave"]],
+      "drill": [
+        "She works from home twice a week.",
+        "He watches the news while he eats breakfast.",
+        "She lives close to the station, so she walks."
+      ]
+    }
+  },
+  "reading": {
+    "title": "Why mornings are hard",
+    "text": "Most people say they are not morning people. But our mornings are not only about our bodies; they are also about the people around us.\n\nIn one study, researchers asked office workers to write down every morning task: finding keys, making coffee, checking messages, deciding what to wear. The list was longer than anyone expected. Each small task seems easy, but together they fill the first hour of the day. People who prepare these things the night before arrive at work calmer and start faster.\n\nAnother reason is social. If your partner leaves at six, you wake up at six, even if you could sleep longer. Families create routines without noticing. Children who see their parents rush every morning often become adults who rush as well.\n\nThe good news is that routines can change. Small changes work best: put your keys in the same place, make lunch the night before, and leave your phone in another room for the first twenty minutes of the day. None of these ideas is exciting, but together they make the morning feel shorter and quieter.",
+    "questions": [
+      {
+        "type": "tfng",
+        "question": "The study looked at workers in offices.",
+        "answer": "True",
+        "why": "The text says researchers asked office workers to write down their morning tasks."
+      },
+      {
+        "type": "tfng",
+        "question": "The workers wrote a shorter list than the researchers expected.",
+        "answer": "False",
+        "why": "The text says the list was longer than anyone expected."
+      },
+      {
+        "type": "tfng",
+        "question": "The article says phones should be used in the morning.",
+        "answer": "False",
+        "why": "It suggests leaving your phone in another room for the first twenty minutes."
+      },
+      {
+        "type": "mcq",
+        "question": "Why do families often wake up early together?",
+        "options": [
+          "Because they all have the same alarm",
+          "Because one person's schedule affects the others",
+          "Because children cannot sleep late"
+        ],
+        "answer": 1,
+        "why": "The text explains that if your partner leaves at six, you wake up at six, even if you could sleep longer."
+      },
+      {
+        "type": "short",
+        "question": "What simple example does the article give about keys?",
+        "answer": "Put your keys in the same place",
+        "why": "This is one of the three small changes listed in the final paragraph."
+      }
+    ],
+    "summaryTask": "Retell the article in 60 seconds: the problem, two reasons, and one solution you might actually use."
+  },
+  "writing": {
+    "task": "Write a short email to a friend in another city describing your typical day. Include: what time you start, how you travel, one thing you enjoy, and one thing you would like to change. 60–90 words.",
+    "genre": "email",
+    "minWords": 60,
+    "checklist": [
+      "Use present simple for your normal routine",
+      "Use one present continuous sentence about a temporary situation",
+      "End with a question for your friend"
+    ],
+    "model": "Hi Karim,\n\nHow are you? Life here is busy but OK. I usually get up at seven and start work at nine. My commute takes about thirty minutes by metro, which is not too bad. In the evening I wind down with a podcast or a short walk.\n\nAt the moment I'm working on a new project, so I'm starting earlier than usual. I like the quiet mornings, but I'd like to finish before six.\n\nWhat about you? Has your routine changed?\n\nTake care,\nMohamed"
+  },
+  "phrases": [
+    "My typical day starts at…",
+    "I usually… but at the moment I'm…",
+    "The best part of my day is…",
+    "Something I'd like to change is…",
+    "Once in a while I…"
+  ]
+}

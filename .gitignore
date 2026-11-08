@@ -1,0 +1,9 @@
+node_modules/
+dist/
+data/
+*.log
+.env
+services/asr/.venv/
+services/asr/__pycache__/
+content/lessons/_generated/
+.vite/
