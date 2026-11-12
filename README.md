@@ -67,6 +67,9 @@ npm run dev
 
 Then open <http://localhost:5173>.
 
+Optional, while both servers run: `npm run smoke` drives the UI in system Edge/Chrome and fails on console
+errors or broken navigation. It is read-only — it does not submit the diagnostic or create a session.
+
 ---
 
 ## First run
@@ -76,7 +79,7 @@ Then open <http://localhost:5173>.
 2. It grades each skill separately and sets your starting level per skill. Reading at B1 and speaking at A2 is
    normal and expected.
 3. Day 1 is already written and cached. Every later lesson is written by the local model the first time you open it
-   (60–180 s), then cached in `content/lessons/`.
+   (about 2–5 minutes, several short model calls), then cached in `content/lessons/`.
 
 ---
 

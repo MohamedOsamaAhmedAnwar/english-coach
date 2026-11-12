@@ -13,10 +13,12 @@
     "dev:web": "npm --workspace @coach/web run dev",
     "build": "npm --workspace @coach/web run build",
     "seed": "npm --workspace @coach/api run seed",
+    "smoke": "node scripts/smoke.mjs",
     "start": "npm run dev"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "playwright-core": "^1.65.0"
   },
   "engines": {
     "node": ">=22.5.0"

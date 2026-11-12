@@ -113,133 +113,316 @@ export async function listLessons() {
   return CURRICULUM.map((spec) => ({
     ...spec,
     ready: byId.has(spec.id),
-    title: byId.get(spec.id)?.topic
-      ? `${byId.get(spec.id).topic}`
-      : `${spec.topic} — ${spec.angle}`,
+    title: byId.get(spec.id)?.topic || `${spec.topic} — ${spec.angle}`,
   }));
 }
 
+/* ------------------------------------------------------------------ */
+/* Normalisation helpers                                               */
+/* ------------------------------------------------------------------ */
+
 function asArray(value, fallback = []) {
-  return Array.isArray(value) ? value : fallback;
+  if (Array.isArray(value)) return value;
+  if (value == null) return fallback;
+  return [value];
+}
+
+function str(value) {
+  if (value == null) return '';
+  if (typeof value === 'string') return value.trim();
+  if (typeof value === 'number') return String(value);
+  return '';
+}
+
+function words(text) {
+  return str(text).split(/\s+/).filter(Boolean).length;
+}
+
+function coerceIndex(value, options = []) {
+  if (typeof value === 'number' && Number.isFinite(value)) return Math.trunc(value);
+  const raw = str(value);
+  if (!raw) return 0;
+  if (/^[A-Za-z]$/.test(raw)) return raw.toUpperCase().charCodeAt(0) - 65;
+  const n = Number(raw);
+  if (Number.isFinite(n)) return n;
+  const idx = options.findIndex((o) => str(o).toLowerCase() === raw.toLowerCase());
+  return idx >= 0 ? idx : 0;
+}
+
+// Models often return options as "A) text" or "1. text"; the UI adds its own letter.
+function cleanOption(value) {
+  return str(value)
+    .replace(/^\s*(?:[A-Za-z]|\d{1,2})\s*[).:-]\s+/, '')
+    .trim();
+}
+
+function padOptions(options, count = 3) {
+  const cleaned = options.map(cleanOption).filter(Boolean);
+  const unique = [...new Set(cleaned)];
+  while (unique.length < count) unique.push(`Option ${unique.length + 1}`);
+  return unique;
+}
+
+function normaliseScript(listening) {
+  const raw =
+    listening.script ??
+    listening.dialogue ??
+    listening.lines ??
+    listening.conversation ??
+    listening.transcript;
+
+  const lines = asArray(raw)
+    .map((line, index) => {
+      if (typeof line === 'string') {
+        const match = line.match(/^\s*([A-Z][A-Za-z .'’-]{0,20}):\s*(.+)$/);
+        if (match) return { speaker: match[1].trim(), text: match[2].trim() };
+        return { speaker: index % 2 === 0 ? 'A' : 'B', text: line.trim() };
+      }
+      const text = str(line?.text ?? line?.line ?? line?.utterance ?? line?.dialogue ?? line?.content);
+      return { speaker: str(line?.speaker ?? line?.name ?? (index % 2 === 0 ? 'A' : 'B')), text };
+    })
+    .filter((line) => line.text);
+
+  if (lines.length) return lines;
+
+  if (typeof raw === 'string') {
+    return raw
+      .split(/\n+/)
+      .map((line, index) => ({ speaker: index % 2 === 0 ? 'A' : 'B', text: line.trim() }))
+      .filter((line) => line.text);
+  }
+  return [];
+}
+
+function normaliseQuestions(reading, lesson) {
+  const raw = asArray(reading.questions ?? lesson.questions ?? reading.items);
+  return raw
+    .map((q) => {
+      const rawType = str(q?.type ?? q?.question_type).toLowerCase();
+      let type = 'short';
+      if (rawType.includes('tf') || rawType.includes('true')) type = 'tfng';
+      else if (rawType.includes('mc') || rawType.includes('choice')) type = 'mcq';
+
+      const options = padOptions(asArray(q?.options ?? q?.choices)).slice(0, 4);
+      const answer =
+        type === 'mcq' ? coerceIndex(q?.answer ?? q?.correct, options) : str(q?.answer ?? q?.correct);
+
+      let finalAnswer = answer;
+      if (type === 'tfng') {
+        const a = str(answer).toLowerCase();
+        finalAnswer = a.startsWith('t') ? 'True' : a.startsWith('f') ? 'False' : 'Not Given';
+      }
+      if (type === 'mcq') {
+        const idx = Number(finalAnswer);
+        finalAnswer = Number.isInteger(idx) && idx >= 0 && idx < options.length ? idx : 0;
+      }
+      return {
+        type: type === 'mcq' && options.length < 2 ? 'short' : type,
+        question: str(q?.question ?? q?.prompt),
+        options: type === 'mcq' ? options : [],
+        answer: finalAnswer,
+        why: str(q?.why ?? q?.explanation ?? q?.reason),
+      };
+    })
+    .filter((q) => q.question && (q.answer !== '' || Number.isFinite(q.answer)));
 }
 
 export function validateLesson(lesson, spec) {
   if (!lesson || typeof lesson !== 'object') throw new Error('Lesson is not an object');
-  const level = lesson.level || spec.genLevel;
   const id = spec.id;
 
-  const vocab = asArray(lesson.vocab)
+  const vocabRaw = asArray(lesson.vocab ?? lesson.vocabulary);
+  const vocab = vocabRaw
     .map((v) => ({
-      term: String(v?.term || '').trim(),
-      ipa: String(v?.ipa || ''),
-      meaning: String(v?.meaning || ''),
-      example: String(v?.example || ''),
+      term: str(v?.term ?? v?.word ?? v?.phrase),
+      ipa: str(v?.ipa ?? v?.pronunciation),
+      meaning: str(v?.meaning ?? v?.definition),
+      example: str(v?.example ?? v?.sentence),
     }))
-    .filter((v) => v.term);
+    .filter((v) => v.term && v.meaning);
 
-  const listening = lesson.listening || {};
-  const script = asArray(listening.script)
-    .map((line) => ({
-      speaker: String(line?.speaker || 'Speaker'),
-      text: String(line?.text || '').trim(),
+  const listeningRaw = lesson.listening ?? lesson.listening_task ?? {};
+  const script = normaliseScript(listeningRaw);
+  const gistRaw = listeningRaw.gist ?? listeningRaw.main_idea ?? {};
+  const gistOptions = padOptions(asArray(gistRaw.options));
+  const gist = {
+    question: str(gistRaw.question ?? 'What is the main idea?'),
+    options: gistOptions,
+    answer: Math.min(2, Math.max(0, coerceIndex(gistRaw.answer ?? gistRaw.correct, gistOptions))),
+  };
+
+  const detail = asArray(listeningRaw.detail ?? listeningRaw.details ?? listeningRaw.questions)
+    .map((q) => ({
+      question: str(q?.question ?? q?.prompt),
+      answer: str(q?.answer ?? q?.correct),
     }))
-    .filter((line) => line.text);
+    .filter((q) => q.question && q.answer);
 
-  const gist = listening.gist || {};
-  const options = asArray(gist.options).map(String);
-  const listeningDetail = asArray(listening.detail)
-    .map((q) => ({ question: String(q?.question || ''), answer: String(q?.answer || '') }))
+  const readingRaw = lesson.reading ?? lesson.reading_task ?? {};
+  const questions = normaliseQuestions(readingRaw, lesson);
+
+  const speakingRaw = lesson.speaking ?? {};
+  const qaRaw = asArray(speakingRaw.qa ?? speakingRaw.questions ?? speakingRaw.prompts);
+  const qa = qaRaw
+    .map((q) => {
+      if (typeof q === 'string') return { question: q.trim(), hint: '', target: [] };
+      return {
+        question: str(q?.question ?? q?.prompt),
+        hint: str(q?.hint ?? q?.guidance),
+        target: asArray(q?.target ?? q?.targets ?? q?.useful_language).map(str).filter(Boolean),
+      };
+    })
     .filter((q) => q.question);
 
-  const reading = lesson.reading || {};
-  const questions = asArray(reading.questions)
-    .map((q) => ({
-      type: ['tfng', 'mcq', 'short'].includes(q?.type) ? q.type : 'short',
-      question: String(q?.question || ''),
-      options: asArray(q?.options).map(String),
-      answer:
-        typeof q?.answer === 'number' ? q.answer : String(q?.answer ?? '').trim(),
-      why: String(q?.why || ''),
-    }))
-    .filter((q) => q.question && (q.answer !== '' || Number.isFinite(q.answer)));
+  const monologueRaw = speakingRaw.monologue ?? speakingRaw.long_turn ?? {};
+  const pronRaw = speakingRaw.pronunciation ?? {};
+  const pairs = asArray(pronRaw.pairs ?? pronRaw.minimal_pairs)
+    .map((p) => asArray(p).map(str))
+    .filter((p) => p.length === 2 && p[0] && p[1] && p[0].toLowerCase() !== p[1].toLowerCase());
 
-  const speaking = lesson.speaking || {};
-  const monologue = speaking.monologue || {};
-
+  const writingRaw = lesson.writing ?? lesson.writing_task ?? {};
   const cleaned = {
     id,
     specId: id,
-    level,
+    level: spec.genLevel,
     phase: spec.phase,
     week: spec.week,
     day: spec.day,
     dayIndex: spec.dayIndex,
-    topic: String(lesson.topic || spec.topic),
+    topic: str(lesson.topic) || spec.topic,
     angle: spec.angle,
-    grammar: String(lesson.grammar || spec.grammar),
-    objectives: asArray(lesson.objectives).map(String).slice(0, 4),
+    grammar: str(lesson.grammar) || spec.grammar,
+    objectives: asArray(lesson.objectives).map(str).filter(Boolean).slice(0, 4),
     vocab: vocab.slice(0, 8),
     listening: {
-      title: String(listening.title || `${spec.topic} — listening`),
-      accent: String(listening.accent || 'British'),
-      script: script.slice(0, 18),
-      gist: {
-        question: String(gist.question || 'What is the main idea?'),
-        options: options.length ? options : ['A', 'B', 'C'],
-        answer: Number.isInteger(gist.answer) ? gist.answer : 0,
-      },
-      detail: listeningDetail.slice(0, 5),
-      shadowing: asArray(listening.shadowing).map(String).filter(Boolean).slice(0, 5),
+      title: str(listeningRaw.title) || `${spec.topic} — listening`,
+      accent: /american|us/i.test(str(listeningRaw.accent)) ? 'American' : 'British',
+      script,
+      gist,
+      detail: detail.slice(0, 5),
+      shadowing: asArray(listeningRaw.shadowing ?? listeningRaw.repeat)
+        .map(str)
+        .filter((s) => s.split(/\s+/).length >= 3)
+        .slice(0, 4),
     },
     speaking: {
-      warmup: asArray(speaking.warmup).map(String).filter(Boolean).slice(0, 5),
-      qa: asArray(speaking.qa)
-        .map((q) => ({
-          question: String(q?.question || ''),
-          hint: String(q?.hint || ''),
-          target: asArray(q?.target).map(String),
-        }))
-        .filter((q) => q.question)
-        .slice(0, 6),
+      warmup: asArray(speakingRaw.warmup ?? speakingRaw.warm_up)
+        .map(str)
+        .filter(Boolean)
+        .slice(0, 4),
+      qa: qa.slice(0, 5),
       monologue: {
-        prompt: String(monologue.prompt || `Talk about ${spec.topic.toLowerCase()} for ${spec.seconds} seconds.`),
-        seconds: Number(monologue.seconds) > 20 ? Number(monologue.seconds) : spec.seconds,
-        structure: asArray(monologue.structure).map(String),
-        useful: asArray(monologue.useful).map(String),
+        prompt:
+          str(monologueRaw.prompt) ||
+          `Talk about ${spec.topic.toLowerCase()} for ${spec.seconds} seconds.`,
+        seconds: spec.seconds,
+        structure: asArray(monologueRaw.structure).map(str).filter(Boolean).slice(0, 6),
+        useful: asArray(monologueRaw.useful ?? monologueRaw.useful_language)
+          .map(str)
+          .filter(Boolean)
+          .slice(0, 5),
       },
       pronunciation: {
-        focus: String(speaking.pronunciation?.focus || 'word stress and clear endings'),
-        pairs: asArray(speaking.pronunciation?.pairs).map((p) => asArray(p).map(String)),
-        drill: asArray(speaking.pronunciation?.drill).map(String),
+        focus: str(pronRaw.focus) || 'word stress and clear endings',
+        pairs: pairs.slice(0, 4),
+        drill: asArray(pronRaw.drill ?? pronRaw.sentences)
+          .map(str)
+          .filter((s) => s.split(/\s+/).length >= 3)
+          .slice(0, 4),
       },
     },
     reading: {
-      title: String(reading.title || spec.topic),
-      text: String(reading.text || '').trim(),
+      title: str(readingRaw.title) || spec.topic,
+      text: str(readingRaw.text ?? readingRaw.passage ?? lesson.passage),
       questions: questions.slice(0, 6),
-      summaryTask: String(reading.summaryTask || 'Retell the text aloud in 60 seconds using three key words.'),
+      summaryTask:
+        str(readingRaw.summaryTask ?? readingRaw.summary_task) ||
+        'Retell the text aloud in 60 seconds using three key words.',
     },
     writing: {
-      task: String(lesson.writing?.task || 'Write a short paragraph about this topic.'),
-      genre: String(lesson.writing?.genre || 'paragraph'),
-      minWords: Number(lesson.writing?.minWords) || 60,
-      checklist: asArray(lesson.writing?.checklist).map(String),
-      model: String(lesson.writing?.model || ''),
+      task: str(writingRaw.task ?? writingRaw.prompt) || 'Write a short paragraph about this topic.',
+      genre: str(writingRaw.genre ?? writingRaw.type) || 'paragraph',
+      minWords:
+        Number(writingRaw.minWords ?? writingRaw.min_words) > 10
+          ? Number(writingRaw.minWords ?? writingRaw.min_words)
+          : 60,
+      checklist: asArray(writingRaw.checklist).map(str).filter(Boolean).slice(0, 4),
+      model: str(writingRaw.model ?? writingRaw.model_answer),
     },
-    phrases: asArray(lesson.phrases).map(String).filter(Boolean).slice(0, 6),
+    phrases: asArray(lesson.phrases ?? lesson.target_language)
+      .map(str)
+      .filter(Boolean)
+      .slice(0, 6),
     generatedAt: new Date().toISOString(),
   };
 
-  if (cleaned.listening.script.length < 3) {
-    throw new Error('Lesson has no usable listening script');
+  // Repair rather than fail: models sometimes drop these, but the UI needs them.
+  if (!cleaned.phrases.length) {
+    cleaned.phrases = [
+      ...cleaned.vocab.map((v) => v.term),
+      ...cleaned.speaking.monologue.useful,
+    ]
+      .filter(Boolean)
+      .slice(0, 4);
   }
-  if (cleaned.reading.text.length < 60) {
-    throw new Error('Lesson has no usable reading text');
+  if (cleaned.listening.shadowing.length < 2) {
+    cleaned.listening.shadowing = cleaned.listening.script
+      .flatMap((line) => line.text.split(/(?<=[.!?])\s+/))
+      .map((s) => s.trim())
+      .filter((s) => s.split(/\s+/).length >= 6)
+      .slice(0, 3);
   }
-  if (!cleaned.speaking.qa.length) {
-    throw new Error('Lesson has no speaking questions');
+  if (!cleaned.speaking.warmup.length) {
+    cleaned.speaking.warmup = [
+      `What comes to mind when you hear "${cleaned.topic}"?`,
+      'What did you do yesterday that was similar?',
+      'What would you like to change about it?',
+    ];
   }
+  if (cleaned.speaking.pronunciation.drill.length < 2) {
+    cleaned.speaking.pronunciation.drill = cleaned.listening.shadowing.slice(0, 3);
+  }
+
+  if (cleaned.listening.script.length < 3) throw new Error('Lesson has no usable listening script');
+  if (words(cleaned.reading.text) < 60) throw new Error('Lesson has no usable reading text');
+  if (!cleaned.speaking.qa.length) throw new Error('Lesson has no speaking questions');
   return cleaned;
+}
+
+const GRAMMAR_WORDS = new Set([
+  'usually', 'sometimes', 'never', 'always', 'often', 'rarely', 'seldom',
+  'busy', 'free', 'good', 'bad', 'nice', 'happy', 'sad',
+]);
+
+export function qualityIssues(lesson) {
+  const issues = [];
+  if (lesson.vocab.length < 5) issues.push('vocab must contain 6 items (currently ' + lesson.vocab.length + ')');
+  if (lesson.vocab.filter((v) => v.term.trim().split(/\s+/).length === 1 && GRAMMAR_WORDS.has(v.term.toLowerCase())).length >= 3) {
+    issues.push('vocab is full of basic frequency words; use useful multi-word chunks instead');
+  }
+  if (lesson.listening.script.length < 8) {
+    issues.push('listening.script must have at least 8 turns (currently ' + lesson.listening.script.length + ')');
+  }
+  const scriptWords = lesson.listening.script.reduce((n, l) => n + words(l.text), 0);
+  if (scriptWords < 150) issues.push('listening.script must total at least 150 words (currently ' + scriptWords + ')');
+  if (words(lesson.reading.text) < 140) issues.push('reading.text must be at least 140 words (currently ' + words(lesson.reading.text) + ')');
+  if (lesson.reading.questions.length < 4) issues.push('reading.questions must have 5 items');
+  if (lesson.speaking.qa.length < 3) issues.push('speaking.qa must have 3 items');
+  if (lesson.listening.shadowing.length < 2) issues.push('listening.shadowing must have 3 sentences from the script');
+  if (lesson.speaking.pronunciation.pairs.length < 2) issues.push('pronunciation.pairs needs 2 real pairs such as ["ship","sheep"]');
+  if (lesson.phrases.length < 3) issues.push('phrases must have at least 3 chunks');
+  const mcq = lesson.reading.questions.filter((q) => q.type === 'mcq');
+  if (mcq.some((q) => typeof q.answer !== 'number' || q.answer < 0 || q.answer >= q.options.length)) {
+    issues.push('every mcq answer must be a valid option index');
+  }
+  const speakerNames = lesson.listening.script.map((l) => l.speaker).filter((n) => n.length > 2);
+  if (
+    speakerNames.length &&
+    speakerNames.some((name) => new RegExp(`\\b${name}\\b`, 'i').test(lesson.reading.text))
+  ) {
+    issues.push('reading.text must describe different people, not the listening dialogue speakers');
+  }
+  return issues;
 }
 
 export async function loadLesson(id, { generate = true, onProgress } = {}) {
@@ -250,35 +433,42 @@ export async function loadLesson(id, { generate = true, onProgress } = {}) {
   if (existing) {
     try {
       return validateLesson(existing, spec);
-    } catch (err) {
-      if (!generate) throw err;
+    } catch {
+      if (!generate) throw new Error(`Cached lesson ${id} is invalid`);
     }
   }
   if (!generate) return null;
 
   await mkdir(LESSON_DIR, { recursive: true });
-  onProgress?.(`Writing ${spec.id}: ${spec.topic}…`);
-  let lastError;
+  let best = null;
+  let lastError = null;
+  let fixes = '';
+
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
-      const raw = await generateLesson({
-        ...spec,
-        requiredSchemaVersion: 2,
-        attempt,
-        instruction:
-          attempt > 1
-            ? 'The previous attempt was rejected for missing or invalid fields. Return complete, valid JSON with a full listening script, reading text and speaking questions.'
-            : undefined,
-      });
+      onProgress?.(`Writing ${spec.id} (attempt ${attempt})…`);
+      const raw = await generateLesson({ ...spec, requiredSchemaVersion: 2, fix: fixes || undefined });
       const cleaned = validateLesson({ ...raw, id }, spec);
-      await writeFile(join(LESSON_DIR, `${id}.json`), JSON.stringify(cleaned, null, 2), 'utf8');
-      return cleaned;
+      const issues = qualityIssues(cleaned);
+      if (!best || issues.length < best.issues.length) best = { lesson: cleaned, issues };
+      if (!issues.length) break;
+      fixes = issues.join('; ');
+      onProgress?.(`Quality check found: ${fixes}`);
     } catch (err) {
       lastError = err;
+      fixes = `${err.message}. Return every required key with the exact shapes described.`;
       onProgress?.(`Attempt ${attempt} failed: ${err.message}`);
     }
   }
-  throw Object.assign(new Error(`Could not generate ${id}: ${lastError?.message}`), {
-    status: 502,
-  });
+
+  if (!best) {
+    throw Object.assign(new Error(`Could not generate ${id}: ${lastError?.message || 'unknown error'}`), {
+      status: 502,
+    });
+  }
+  if (best.issues.length) {
+    onProgress?.(`Saving the best attempt with ${best.issues.length} quality notes.`);
+  }
+  await writeFile(join(LESSON_DIR, `${id}.json`), JSON.stringify(best.lesson, null, 2), 'utf8');
+  return best.lesson;
 }

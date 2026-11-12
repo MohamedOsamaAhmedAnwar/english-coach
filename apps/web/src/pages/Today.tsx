@@ -167,7 +167,7 @@ export function Today({
             </div>
             <p className="muted tiny">
               Lesson is written on demand by your local model the first time you open it — that first start can take
-              a minute or two.
+              2–5 minutes. It is cached after that.
             </p>
           </section>
 

@@ -79,7 +79,7 @@ function utter(
     u.onerror = done;
     window.speechSynthesis.speak(u);
     // Safety net for browsers that never fire onend.
-    setTimeout(done, Math.min(60_000, 900 + text.length * 95 * (1 / (opts.rate ?? 1))));
+    setTimeout(done, Math.min(120_000, 3000 + text.length * 220 * (1 / (opts.rate ?? 1))));
   });
 }
 

@@ -21,9 +21,9 @@ const STEPS = [
 const PREP_MESSAGES = [
   'Selecting vocabulary for your level…',
   'Writing the listening dialogue…',
+  'Designing the speaking tasks…',
   'Building the reading passage…',
-  'Designing questions and the model answer…',
-  'Checking the lesson structure…',
+  'Writing the model answer…',
 ];
 
 export function Session({
@@ -71,12 +71,12 @@ export function Session({
           }
         }
         if (cancelled) return;
-        setLesson(loaded);
         setPreparing(false);
 
         const created = await api.post<{ session: { id: number } }>('/api/sessions', { lessonId });
         if (cancelled) return;
         setSessionId(created.session.id);
+        setLesson(loaded);
         stepStart.current = Date.now();
       } catch (err) {
         if (!cancelled) setError((err as Error).message);
@@ -166,7 +166,8 @@ export function Session({
                 {prepSeconds}s · {PREP_MESSAGES[Math.floor(prepSeconds / 6) % PREP_MESSAGES.length]}
               </p>
               <p className="muted tiny">
-                Usually 60–180 seconds on this machine. If it takes much longer, the model is still loading.
+                Usually 2–5 minutes: the local model writes the lesson in short steps (dialogue, questions,
+                vocabulary, speaking, reading, writing). It is cached after this.
               </p>
             </>
           )}

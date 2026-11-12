@@ -205,7 +205,10 @@ app.get('/api/lessons/:id', async (req, reply) => {
 app.post('/api/lessons/:id/prepare', async (req) => {
   const spec = specFor(req.params.id);
   if (!spec) throw Object.assign(new Error('Unknown lesson'), { status: 404 });
-  const lesson = await loadLesson(req.params.id, { generate: true });
+  const lesson = await loadLesson(req.params.id, {
+    generate: true,
+    onProgress: (message) => req.log.info({ lesson: req.params.id }, message),
+  });
   return { lesson, spec };
 });
 

@@ -1,0 +1,272 @@
+{
+  "id": "w01d2",
+  "specId": "w01d2",
+  "level": "A2",
+  "phase": "Foundation",
+  "week": 1,
+  "day": 2,
+  "dayIndex": 2,
+  "topic": "Daily life and routines",
+  "angle": "a real-world conversation and its details",
+  "grammar": "present simple vs present continuous",
+  "objectives": [
+    "I can describe my daily routine.",
+    "I can compare my weekend with weekdays."
+  ],
+  "vocab": [
+    {
+      "term": "get up early",
+      "ipa": "",
+      "meaning": "wake up in the morning",
+      "example": "I get up early on weekdays."
+    },
+    {
+      "term": "catch up with friends",
+      "ipa": "",
+      "meaning": "meet friends to talk or have fun",
+      "example": "On weekends, I catch up with friends."
+    },
+    {
+      "term": "go running",
+      "ipa": "",
+      "meaning": "exercise by running",
+      "example": "Every morning, I go running."
+    },
+    {
+      "term": "take a shower",
+      "ipa": "",
+      "meaning": "wash yourself in the bathroom",
+      "example": "I take a shower before work."
+    },
+    {
+      "term": "watch TV",
+      "ipa": "",
+      "meaning": "view television programs at home",
+      "example": "On weekends, I watch TV until dinner."
+    }
+  ],
+  "listening": {
+    "title": "Weekend vs Weekday",
+    "accent": "British",
+    "script": [
+      {
+        "speaker": "Tom",
+        "text": "Hi Sarah, how was your weekend?"
+      },
+      {
+        "speaker": "Sarah",
+        "text": "Oh it was good, Tom. Not too busy."
+      },
+      {
+        "speaker": "Tom",
+        "text": "What did you do? Any plans for the week?"
+      },
+      {
+        "speaker": "Sarah",
+        "text": "Not really. Just work and maybe a few errands. How about you?"
+      },
+      {
+        "speaker": "Tom",
+        "text": "I slept in on Saturday, watched some TV. Sunday was pretty packed with stuff."
+      },
+      {
+        "speaker": "Sarah",
+        "text": "Really? What kind of stuff?"
+      },
+      {
+        "speaker": "Tom",
+        "text": "Well, I had to do the garden, cook dinner for friends. You know, typical."
+      },
+      {
+        "speaker": "Sarah",
+        "text": "Sounds busy! On a weekday you usually go out more, right?"
+      },
+      {
+        "speaker": "Tom",
+        "text": "Yeah, I go to the gym in the morning and then meet friends for lunch."
+      },
+      {
+        "speaker": "Sarah",
+        "text": "So what's different this week?"
+      },
+      {
+        "speaker": "Tom",
+        "text": "Just work. Lots of meetings all day, no time for social stuff."
+      },
+      {
+        "speaker": "Sarah",
+        "text": "A bit boring, huh?"
+      },
+      {
+        "speaker": "Tom",
+        "text": "Yeah, a bit. But it's nice to have those weekends to unwind."
+      },
+      {
+        "speaker": "Sarah",
+        "text": "True. So you're doing less this weekend then usual?"
+      },
+      {
+        "speaker": "Tom",
+        "text": "Definitely. Usually I go for a walk, maybe see a film. This time I'm just chilling at home."
+      }
+    ],
+    "gist": {
+      "question": "What are Tom and Sarah talking about?",
+      "options": [
+        "Their weekend plans",
+        "Their daily routines",
+        "Their work schedules"
+      ],
+      "answer": 1
+    },
+    "detail": [
+      {
+        "question": "How did Sarah spend her weekend?",
+        "answer": "Not too busy"
+      },
+      {
+        "question": "What did Tom do on Sunday?",
+        "answer": "do the garden, cook dinner for friends"
+      },
+      {
+        "question": "Where does Tom usually go in the morning during weekdays?",
+        "answer": "to the gym"
+      }
+    ],
+    "shadowing": [
+      "Oh it was good, Tom. Not too busy.",
+      "I slept in on Saturday, watched some TV.",
+      "Sunday was pretty packed with stuff."
+    ]
+  },
+  "speaking": {
+    "warmup": [
+      "What do you usually do in the morning?",
+      "Do you have a pet? What does it do?",
+      "How often do you go out on weekends?"
+    ],
+    "qa": [
+      {
+        "question": "Tell me about your routine for a normal weekday.",
+        "hint": "Use 'usually' to talk about habits",
+        "target": [
+          "usually do",
+          "every day"
+        ]
+      },
+      {
+        "question": "Compare your weekend and weekday routines. How are they different?",
+        "hint": "Describe what you do differently on the weekends",
+        "target": [
+          "on weekends",
+          "on weekdays"
+        ]
+      },
+      {
+        "question": "Do you have any plans for today? Describe them.",
+        "hint": "Use 'I'm going to' to talk about future plans",
+        "target": [
+          "I'm going to",
+          "later in the day"
+        ]
+      }
+    ],
+    "monologue": {
+      "prompt": "Describe your daily routine.",
+      "seconds": 60,
+      "structure": [
+        "Start day",
+        "Morning activities",
+        "Evening activities",
+        "Sleep"
+      ],
+      "useful": [
+        "I wake up early.",
+        "I usually exercise after breakfast.",
+        "In the evening, I read a book."
+      ]
+    },
+    "pronunciation": {
+      "focus": "Final consonant sounds",
+      "pairs": [
+        [
+          "ship",
+          "sheep"
+        ],
+        [
+          "thin",
+          "sin"
+        ]
+      ],
+      "drill": [
+        "She ships books every day.",
+        "He thinks about his trip.",
+        "I leave my keys on the table."
+      ]
+    }
+  },
+  "reading": {
+    "title": "Gardening and Socializing",
+    "text": "Nadia usually wakes up early to tend to her garden. She waters the plants and pulls out any weeds. On weekends, she often invites friends over for a barbecue. During the week, she prefers to stay in, reading or watching TV. In contrast, Ella sleeps in late on Saturdays, spending the morning browsing online stores. On Sunday afternoons, she goes to the gym and then meets up with her book club. At work, Ella usually has a packed schedule, attending meetings all day.\n\nNadia's weekends are filled with gardening activities and hosting friends for meals. She loves preparing homemade dishes and enjoying company outside. Every Saturday, Nadia spends hours in her garden, planting new flowers and trimming shrubs. Her friends appreciate the relaxed atmosphere and delicious food she serves. Ella, on the other hand, finds her weekdays more hectic. She runs from one meeting to another, rarely having time for socializing. During lunch breaks, she grabs quick meals at work or orders takeout.\n\nOn Fridays, Nadia starts early to prepare a special meal for her guests, while Ella finishes her meetings and rushes home to change before her book club meeting.",
+    "questions": [
+      {
+        "type": "tfng",
+        "question": "Nadia wakes up late on weekdays.",
+        "options": [],
+        "answer": "False",
+        "why": "She usually wakes up early to tend to her garden."
+      },
+      {
+        "type": "tfng",
+        "question": "Ella often invites friends over for a barbecue on weekends.",
+        "options": [],
+        "answer": "False",
+        "why": "She sleeps in late on Saturdays, spending the morning browsing online stores."
+      },
+      {
+        "type": "mcq",
+        "question": "What does Nadia do every Saturday afternoon?",
+        "options": [
+          "waters the plants",
+          "prepares a special meal",
+          "goes to the gym"
+        ],
+        "answer": 1,
+        "why": "Every Saturday, Nadia spends hours in her garden, planting new flowers and trimming shrubs. She starts early to prepare a special meal for her guests."
+      },
+      {
+        "type": "short",
+        "question": "What does Nadia love doing on weekends?",
+        "options": [],
+        "answer": "enjoying company outside",
+        "why": "She loves preparing homemade dishes and enjoying company outside."
+      },
+      {
+        "type": "short",
+        "question": "How does Ella spend her lunch breaks?",
+        "options": [],
+        "answer": "grabs quick meals at work or orders takeout",
+        "why": "During lunch breaks, she grabs quick meals at work or orders takeout."
+      }
+    ],
+    "summaryTask": "Retell the text aloud in 60 seconds using three key words."
+  },
+  "writing": {
+    "task": "Write an email to your friend about your weekend plans. Compare what you usually do on the weekends with what you will be doing this weekend.",
+    "genre": "email",
+    "minWords": 60,
+    "checklist": [
+      "Use present simple for usual activities.",
+      "Use present continuous for this weekend’s plans.",
+      "Compare the two weekends."
+    ],
+    "model": "Hi Sarah! This weekend is going to be different. Usually, I read books and watch TV at home on Saturdays. But now, I'm meeting my friends for a picnic in the park. On Sundays, I normally go hiking with my family. This time, we're planning to visit your uncle in town. See you next week! Best, Alex"
+  },
+  "phrases": [
+    "get up early",
+    "catch up with friends",
+    "go running",
+    "take a shower"
+  ],
+  "generatedAt": "2026-11-12T15:52:21.491Z"
+}
